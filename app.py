@@ -1,6 +1,5 @@
 import streamlit as st
 import requests
-import time
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
@@ -8,36 +7,6 @@ import re
 import io
 from urllib.parse import urljoin, urlparse
 import trafilatura
-
-st.set_page_config(
-    page_title="Altın Fiyatları Hesaplayıcı",
-    page_icon="💰",
-    layout="centered",
-    initial_sidebar_state="expanded",
-    menu_items=None # Tüm menü öğelerini kaldır
-)
-
-# Streamlit'in varsayılan UI elemanlarını gizlemek için özel CSS
-st.markdown("""
-<style>
-/* Hamburger menü ve sağ üstteki GitHub butonu */
-.css-zq5qnv {
-    display: none !important;
-}
-
-/* Sol taraftaki sidebar başlığı (örn. 'Settings') */
-.st-emotion-cache-1pxazr7 {
-    display: none !important;
-}
-
-.main > div {
-    padding-top: 2rem;
-}
-.stApp > header {
-    background-color: transparent;
-}
-</style>
-""", unsafe_allow_html=True)
 
 
 def is_valid_url(url):
@@ -577,7 +546,8 @@ def perform_calculations(numbers, multiplier, operation='multiply'):
     return results
 
 def main():
-    st.sidebar.header("⚙️ Settings")
+    # st.sidebar.header("⚙️ Settings") # Kaldırıldı
+    import time # Buraya taşındı
     
     # Otomatik veri çekme ve hesaplama
     kapali_result = scrape_kapalicarsi_gold_prices()
@@ -737,23 +707,23 @@ def main():
                     st.markdown("""
                     <div style="background: #ff8c42; border-radius: 8px; padding: 15px; text-align: center; 
                                margin: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <h5 style="margin: 0 0 10px 0; color: black; font-size: 16px; font-weight: bold;">Alış</h5>
-                        <div style="font-size: 20px; font-weight: 900; color: black;">
-                            {:.2f} TL
-                        </div>
-                    </div>
-                    """.format(ayar24_calculation['Hesaplanan 24 Ayar Alış']), unsafe_allow_html=True)
-                
-                with col10:
-                    st.markdown("""
-                    <div style="background: #ff8c42; border-radius: 8px; padding: 15px; text-align: center; 
-                               margin: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <h5 style="margin: 0 0 10px 0; color: black; font-size: 16px; font-weight: bold;">Satış</h5>
                         <div style="font-size: 20px; font-weight: 900; color: black;">
                             {:.2f} TL
                         </div>
                     </div>
                     """.format(ayar24_calculation['Hesaplanan 24 Ayar Satış']), unsafe_allow_html=True)
+                
+                with col10:
+                    st.markdown("""
+                    <div style="background: #ff8c42; border-radius: 8px; padding: 15px; text-align: center; 
+                               margin: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h5 style="margin: 0 0 10px 0; color: black; font-size: 16px; font-weight: bold;">Alış</h5>
+                        <div style="font-size: 20px; font-weight: 900; color: black;">
+                            {:.2f} TL
+                        </div>
+                    </div>
+                    """.format(ayar24_calculation['Hesaplanan 24 Ayar Alış']), unsafe_allow_html=True)
             
             # 22 Ayar Bilezik - 2x2 düzen
             if '22 Ayar Bilezik' in data:
