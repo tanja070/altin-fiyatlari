@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import time
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
@@ -7,6 +8,37 @@ import re
 import io
 from urllib.parse import urljoin, urlparse
 import trafilatura
+
+st.set_page_config(
+    page_title="Altın Fiyatları Hesaplayıcı",
+    page_icon="💰",
+    layout="centered",
+    initial_sidebar_state="expanded",
+    menu_items=None # Tüm menü öğelerini kaldır
+)
+
+# Streamlit'in varsayılan UI elemanlarını gizlemek için özel CSS
+st.markdown("""
+<style>
+/* Hamburger menü ve sağ üstteki GitHub butonu */
+.css-zq5qnv {
+    display: none !important;
+}
+
+/* Sol taraftaki sidebar başlığı (örn. 'Settings') */
+.st-emotion-cache-1pxazr7 {
+    display: none !important;
+}
+
+.main > div {
+    padding-top: 2rem;
+}
+.stApp > header {
+    background-color: transparent;
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 def is_valid_url(url):
     """
@@ -754,7 +786,6 @@ def main():
             # st.caption(f"Son güncelleme: {pd.Timestamp.now().strftime('%H:%M:%S')}")
             
             # Otomatik yenileme
-            import time
             if "last_update" not in st.session_state:
                 st.session_state.last_update = time.time()
             
