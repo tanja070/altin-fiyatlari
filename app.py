@@ -8,6 +8,11 @@ import io
 from urllib.parse import urljoin, urlparse
 import trafilatura
 
+st.set_page_config(
+    page_title="Altın Fiyatları Hesaplayıcı",
+    page_icon="💰"
+)
+
 
 def is_valid_url(url):
     """
@@ -361,14 +366,14 @@ def create_four_column_gold_table(ceyrek_calculation, yarim_calculation):
     }}
     
     .card-title {{
-        font-size: 18px;
+        font-size: 22px !important;
         font-weight: bold;
         margin-bottom: 15px;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
     }}
     
     .price-value {{
-        font-size: 24px;
+        font-size: 30px !important;
         font-weight: bold;
         color: #FFD700;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
@@ -377,10 +382,10 @@ def create_four_column_gold_table(ceyrek_calculation, yarim_calculation):
     
     @media (max-width: 768px) {{
         .card-title {{
-            font-size: 16px;
+            font-size: 18px !important;
         }}
         .price-value {{
-            font-size: 20px;
+            font-size: 24px !important;
         }}
         .gold-card {{
             padding: 15px;
@@ -389,10 +394,10 @@ def create_four_column_gold_table(ceyrek_calculation, yarim_calculation):
     
     @media (max-width: 480px) {{
         .card-title {{
-            font-size: 14px;
+            font-size: 16px !important;
         }}
         .price-value {{
-            font-size: 18px;
+            font-size: 22px !important;
         }}
         .gold-card {{
             padding: 12px;
@@ -498,17 +503,17 @@ def scrape_canli_gram_gold_price():
         print(f"Canlı gram altın fiyatı çekilemedi: {e}")
         return None
 
-def calculate_24_ayar_with_data(has_gold_data, canli_gram_satis=None):
+def calculate_24_ayar_with_data(has_gold_data):
     """
     24 Ayar altın: Kapalıçarşı Has Altın alış + Canlı Gram Altın satış
     """
     ayar24_alis = has_gold_data['Alış']
     
     # Canlı gram altın satış fiyatını çek
-    if canli_gram_satis is None:
-        canli_gram_satis = scrape_canli_gram_gold_price()
+    # if canli_gram_satis is None:
+    #     canli_gram_satis = scrape_canli_gram_gold_price()
     
-    ayar24_satis = canli_gram_satis if canli_gram_satis else 0
+    ayar24_satis = ayar24_alis + 20 # Alış fiyatının 20 TL fazlası olarak ayarlandı
     
     return {
         'Hesaplanan 24 Ayar Alış': ayar24_alis,
@@ -546,26 +551,19 @@ def perform_calculations(numbers, multiplier, operation='multiply'):
     return results
 
 def main():
-    # st.sidebar.header("⚙️ Settings") # Kaldırıldı
     import time # Buraya taşındı
+    
+    # Logoyu ve Başlığı yan yana koymak için sütunları kullan
+    col_logo, col_title = st.columns([1, 4]) # Logoya daha az yer, başlığa daha çok yer
+    
+    with col_logo:
+        st.image("logo.png", width=400) # Logonun boyutu 400 piksel olarak ayarlandı
+        
+    with col_title:
+        st.markdown("<h2 style='text-align: center; color: white;'>Altın Fiyatları</h2>", unsafe_allow_html=True)
     
     # Otomatik veri çekme ve hesaplama
     kapali_result = scrape_kapalicarsi_gold_prices()
-    
-    # Responsive CSS
-    st.markdown("""
-    <style>
-    .main > div {
-        padding-top: 2rem;
-    }
-    .stApp > header {
-        background-color: transparent;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # Altın Fiyatları başlığı
-    st.markdown("<h2 style='text-align: center; color: white;'>🏛️ Altın Fiyatları</h2>", unsafe_allow_html=True)
     
     if kapali_result['success']:
         data = kapali_result['data']
@@ -707,23 +705,23 @@ def main():
                     st.markdown("""
                     <div style="background: #ff8c42; border-radius: 8px; padding: 15px; text-align: center; 
                                margin: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                        <h5 style="margin: 0 0 10px 0; color: black; font-size: 16px; font-weight: bold;">Satış</h5>
-                        <div style="font-size: 20px; font-weight: 900; color: black;">
-                            {:.2f} TL
-                        </div>
-                    </div>
-                    """.format(ayar24_calculation['Hesaplanan 24 Ayar Satış']), unsafe_allow_html=True)
-                
-                with col10:
-                    st.markdown("""
-                    <div style="background: #ff8c42; border-radius: 8px; padding: 15px; text-align: center; 
-                               margin: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <h5 style="margin: 0 0 10px 0; color: black; font-size: 16px; font-weight: bold;">Alış</h5>
                         <div style="font-size: 20px; font-weight: 900; color: black;">
                             {:.2f} TL
                         </div>
                     </div>
                     """.format(ayar24_calculation['Hesaplanan 24 Ayar Alış']), unsafe_allow_html=True)
+                
+                with col10:
+                    st.markdown("""
+                    <div style="background: #ff8c42; border-radius: 8px; padding: 15px; text-align: center; 
+                               margin: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h5 style="margin: 0 0 10px 0; color: black; font-size: 16px; font-weight: bold;">Satış</h5>
+                        <div style="font-size: 20px; font-weight: 900; color: black;">
+                            {:.2f} TL
+                        </div>
+                    </div>
+                    """.format(ayar24_calculation['Hesaplanan 24 Ayar Satış']), unsafe_allow_html=True)
             
             # 22 Ayar Bilezik - 2x2 düzen
             if '22 Ayar Bilezik' in data:
