@@ -505,14 +505,27 @@ def scrape_canli_gram_gold_price():
 
 def calculate_24_ayar_with_data(has_gold_data):
     """
-    24 Ayar altın: alış Has Altın alışından 45 TL eksik, satış Has Altın satışına eşit.
+    24 Ayar altın: alış Has Altın satışından 45 TL eksik, satış Has Altın satışına eşit.
     """
-    ayar24_alis = has_gold_data['Alış'] - 45
+    ayar24_alis = has_gold_data['Satış'] - 45
     ayar24_satis = has_gold_data['Satış']
     
     return {
         'Hesaplanan 24 Ayar Alış': ayar24_alis,
         'Hesaplanan 24 Ayar Satış': ayar24_satis
+    }
+
+
+def calculate_22_ayar_bilezik_with_data(has_gold_data):
+    """
+    22 Ayar bilezik: alış Has Altın alışının %91'i, satış Has Altın satışının %92.7'si.
+    """
+    ayar22_alis = has_gold_data['Alış'] * 0.910
+    ayar22_satis = has_gold_data['Satış'] * 0.927
+    
+    return {
+        'Hesaplanan 22 Ayar Bilezik Alış': ayar22_alis,
+        'Hesaplanan 22 Ayar Bilezik Satış': ayar22_satis
     }
 
 def perform_calculations(numbers, multiplier, operation='multiply'):
@@ -578,10 +591,15 @@ def main():
             if 'Cumhuriyet Altın' in data:
                 cumhuriyet_calculation = calculate_cumhuriyet_with_market_data(data['Cumhuriyet Altın'])
             
-            # 24 Ayar altın hesaplama (Kapalıçarşı Has Altın alış + Canlı Gram Altın satış)
+            # 24 Ayar altın hesaplama
             ayar24_calculation = None
             if 'Has Altın' in data:
                 ayar24_calculation = calculate_24_ayar_with_data(data['Has Altın'])
+
+            # 22 Ayar bilezik hesaplama
+            ayar22_calculation = None
+            if 'Has Altın' in data:
+                ayar22_calculation = calculate_22_ayar_bilezik_with_data(data['Has Altın'])
             
             # create_four_column_gold_table fonksiyonunu çağır
             # st.markdown(create_four_column_gold_table(ceyrek_calculation, yarim_calculation), unsafe_allow_html=True)
@@ -719,7 +737,7 @@ def main():
                     """.format(ayar24_calculation['Hesaplanan 24 Ayar Satış']), unsafe_allow_html=True)
             
             # 22 Ayar Bilezik - 2x2 düzen
-            if '22 Ayar Bilezik' in data:
+            if ayar22_calculation:
                 st.markdown("<h3 style='text-align: center; color: white;'>22 Ayar Bilezik</h3>", unsafe_allow_html=True)
                 col11, col12 = st.columns(2)
                 
@@ -732,7 +750,7 @@ def main():
                             {:.2f} TL
                         </div>
                     </div>
-                    """.format(data['22 Ayar Bilezik']['Alış']), unsafe_allow_html=True)
+                    """.format(ayar22_calculation['Hesaplanan 22 Ayar Bilezik Alış']), unsafe_allow_html=True)
                 
                 with col12:
                     st.markdown("""
@@ -743,7 +761,7 @@ def main():
                             {:.2f} TL
                         </div>
                     </div>
-                    """.format(data['22 Ayar Bilezik']['Satış']), unsafe_allow_html=True)
+                    """.format(ayar22_calculation['Hesaplanan 22 Ayar Bilezik Satış']), unsafe_allow_html=True)
 
             # Son güncelleme zamanı
             # st.caption(f"Son güncelleme: {pd.Timestamp.now().strftime('%H:%M:%S')}")
