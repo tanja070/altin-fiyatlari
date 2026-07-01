@@ -293,16 +293,16 @@ def scrape_kapalicarsi_gold_prices():
             'error': f"Kapalıçarşı verilerini çekerken hata oluştu: {str(e)}"
         }
 
-def calculate_ceyrek_with_has_gold(has_gold_rate, alis_multiplier=1.59, satis_multiplier=1.60):
+def calculate_ceyrek_with_has_gold(has_gold_rate, alis_multiplier=1.59, satis_multiplier=1.635):
     """
-    Has Altın kuruyla çeyrek altın hesaplaması yapar
-    Alış için 1.59, satış için 1.60 çarpan kullanır
+    Has Altın kuruyla çeyrek altın hesaplaması yapar.
+    Satış değeri 1.635 çarpanı ile hesaplanır; alış değeri ise satış değerinden 100 TL eksik alınır.
     """
     if not has_gold_rate:
         return None
     
-    calculated_alis = has_gold_rate['Alış'] * alis_multiplier
     calculated_satis = has_gold_rate['Satış'] * satis_multiplier
+    calculated_alis = calculated_satis - 100
     
     return {
         'Has Altın Alış': has_gold_rate['Alış'],
@@ -458,10 +458,10 @@ def calculate_tam_with_yarim(yarim_calculation):
 
 def calculate_cumhuriyet_with_market_data(cumhuriyet_gold_data):
     """
-    Cumhuriyet altın fiyatlarından hem alış hem satış için 180 TL azaltma
+    Ata/Cumhuriyet altın için alış 6.60, satış 6.72 çarpanı uygulanır.
     """
-    cumhuriyet_alis = cumhuriyet_gold_data['Alış'] - 180
-    cumhuriyet_satis = cumhuriyet_gold_data['Satış'] - 180
+    cumhuriyet_alis = cumhuriyet_gold_data['Alış'] * 6.60
+    cumhuriyet_satis = cumhuriyet_gold_data['Satış'] * 6.72
     
     return {
         'Hesaplanan Cumhuriyet Alış': cumhuriyet_alis,
@@ -505,15 +505,10 @@ def scrape_canli_gram_gold_price():
 
 def calculate_24_ayar_with_data(has_gold_data):
     """
-    24 Ayar altın: Kapalıçarşı Has Altın alış + Canlı Gram Altın satış
+    24 Ayar altın: alış Has Altın alışından 45 TL eksik, satış Has Altın satışına eşit.
     """
-    ayar24_alis = has_gold_data['Alış']
-    
-    # Canlı gram altın satış fiyatını çek
-    # if canli_gram_satis is None:
-    #     canli_gram_satis = scrape_canli_gram_gold_price()
-    
-    ayar24_satis = ayar24_alis + 20 # Alış fiyatının 20 TL fazlası olarak ayarlandı
+    ayar24_alis = has_gold_data['Alış'] - 45
+    ayar24_satis = has_gold_data['Satış']
     
     return {
         'Hesaplanan 24 Ayar Alış': ayar24_alis,
@@ -569,8 +564,8 @@ def main():
         data = kapali_result['data']
         
         if 'Has Altın' in data:
-            # Çeyrek altın hesaplama (alış x1.59, satış x1.60)
-            ceyrek_calculation = calculate_ceyrek_with_has_gold(data['Has Altın'], 1.59, 1.60)
+            # Çeyrek altın hesaplama (alış x1.59, satış x1.635)
+            ceyrek_calculation = calculate_ceyrek_with_has_gold(data['Has Altın'], 1.59, 1.635)
             
             # Yarım altın hesaplama (çeyrek x2)
             yarim_calculation = calculate_yarim_with_ceyrek(ceyrek_calculation)
