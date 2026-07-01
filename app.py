@@ -586,10 +586,10 @@ def main():
             # Tam altın hesaplama (yarım x2)
             tam_calculation = calculate_tam_with_yarim(yarim_calculation)
             
-            # Cumhuriyet altın hesaplama (Cumhuriyet altın - 180 TL)
+            # Cumhuriyet altın hesaplama (Has Altın alış/satış üzerinden)
             cumhuriyet_calculation = None
-            if 'Cumhuriyet Altın' in data:
-                cumhuriyet_calculation = calculate_cumhuriyet_with_market_data(data['Cumhuriyet Altın'])
+            if 'Has Altın' in data:
+                cumhuriyet_calculation = calculate_cumhuriyet_with_market_data(data['Has Altın'])
             
             # 24 Ayar altın hesaplama
             ayar24_calculation = None
