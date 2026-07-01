@@ -456,12 +456,12 @@ def calculate_tam_with_yarim(yarim_calculation):
         'Hesaplanan Tam Satış': tam_satis
     }
 
-def calculate_cumhuriyet_with_market_data(cumhuriyet_gold_data):
+def calculate_cumhuriyet_with_market_data(has_gold_data):
     """
-    Ata/Cumhuriyet altın için alış 6.60, satış 6.72 çarpanı uygulanır.
+    Ata/Cumhuriyet altın için alış Has Altın alış × 6.60, satış Has Altın satış × 6.72.
     """
-    cumhuriyet_alis = cumhuriyet_gold_data['Alış'] * 6.60
-    cumhuriyet_satis = cumhuriyet_gold_data['Satış'] * 6.72
+    cumhuriyet_alis = has_gold_data['Alış'] * 6.60
+    cumhuriyet_satis = has_gold_data['Satış'] * 6.72
     
     return {
         'Hesaplanan Cumhuriyet Alış': cumhuriyet_alis,
